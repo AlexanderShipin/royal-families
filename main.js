@@ -7,11 +7,12 @@ const svg = d3.select('#royal-tree')
     .style('height', totalHeight + "px");
 
 Promise.all([
-    d3.json("data/members.json"),
-    d3.json("data/relations.json")
-]).then(values => draw(values[0], values[1]));
+    d3.json("data/persons.json"),
+    d3.json("data/relations.json"),
+    d3.json("data/person-settings.json")
+]).then(values => draw(values[0], values[1], values[2]));
 
-function draw(persons, relations) {
+function draw(persons, relations, personSettings) {
     // x Axis
     const xAxisOffset = 30;
     const xScale = (totalWidth - 2 * xAxisOffset) / 1000;
@@ -29,7 +30,7 @@ function draw(persons, relations) {
 
     person.append("circle")
         .attr("cx", function(p) {
-        return p.x * xScale + xAxisOffset;
+        return personSettings[p.id].x * xScale + xAxisOffset;
         })
         .attr("cy", function(p) {
         return (new Date(p.birthDate).getFullYear() - minYear) * yScale + yAxisOffset;
@@ -39,7 +40,7 @@ function draw(persons, relations) {
     
     person.append("text")
         .attr("x", function(p) {
-        return p.x * xScale + xAxisOffset;
+        return personSettings[p.id].x * xScale + xAxisOffset;
         })
         .attr("y", function(p) {
         return (new Date(p.birthDate).getFullYear() - minYear) * yScale + yAxisOffset;
@@ -63,9 +64,9 @@ function draw(persons, relations) {
         const birthYearSource = new Date(persons.find(p => p.id === r.source.id).birthDate).getFullYear();
         const birthYearTarget = new Date(persons.find(p => p.id === r.target.id).birthDate).getFullYear();
 
-        const x1 = persons.find(p => p.id === r.source.id).x * xScale + xAxisOffset;
+        const x1 = personSettings[r.source.id].x * xScale + xAxisOffset;
         const y1 = (birthYearSource - minYear) * yScale + yAxisOffset;
-        const x2 = persons.find(p => p.id === r.target.id).x * xScale + xAxisOffset;
+        const x2 = personSettings[r.target.id].x * xScale + xAxisOffset;
         const y2 = (birthYearTarget - minYear) * yScale + yAxisOffset;
 
         var mx = x1 + (x2 - x1) / 1.5;
