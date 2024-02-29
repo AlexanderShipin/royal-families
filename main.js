@@ -12,6 +12,40 @@ Promise.all([
     d3.json("data/person-settings.json")
 ]).then(values => draw(values[0], values[1], values[2]));
 
+function isParentRelation(relation) {
+    return relation.type === "father-child" || relation.type === "mother-child";
+}
+
+function getFatherIds(personId, relations) {
+    let fatherIds = [];
+    let fatherId = relations.find(x => x.target.id === personId && x.type === "father-child")?.source?.id;
+    while (fatherId) {
+        fatherIds.push(fatherId);
+        fatherId = relations.find(x => x.target.id === fatherId && x.type === "father-child")?.source?.id;
+    }
+    return fatherIds;
+}
+
+function getCoordinateX(personId, relations, personSettings) {
+    let fatherIds = getFatherIds(personId, relations);
+    fatherIds.unshift(personId);
+    let i = 0;
+    let relativeCoordinate = 0;
+    while (i < fatherIds.length && (personSettings[fatherIds[i]].x.startsWith('+') || personSettings[fatherIds[i]].x.startsWith('-'))) {
+        relativeCoordinate += Number(personSettings[fatherIds[i]].x);
+        i++;
+    }
+    if (fatherIds.length == 1) {
+        return Number(personSettings[personId].x);
+    }
+    if (i < fatherIds.length) {
+        return relativeCoordinate + Number(personSettings[fatherIds[i]].x);
+    }
+    else {
+        return relativeCoordinate + totalWidth / 2;
+    }
+}
+
 function draw(persons, relations, personSettings) {
     // x Axis
     const xAxisOffset = 30;
@@ -30,7 +64,7 @@ function draw(persons, relations, personSettings) {
 
     person.append("circle")
         .attr("cx", function(p) {
-        return personSettings[p.id].x * xScale + xAxisOffset;
+        return getCoordinateX(p.id, relations, personSettings) * xScale + xAxisOffset;
         })
         .attr("cy", function(p) {
         return (new Date(p.birthDate).getFullYear() - minYear) * yScale + yAxisOffset;
@@ -40,7 +74,7 @@ function draw(persons, relations, personSettings) {
     
     person.append("text")
         .attr("x", function(p) {
-        return personSettings[p.id].x * xScale + xAxisOffset;
+        return getCoordinateX(p.id, relations, personSettings) * xScale + xAxisOffset;
         })
         .attr("y", function(p) {
         return (new Date(p.birthDate).getFullYear() - minYear) * yScale + yAxisOffset;
@@ -49,7 +83,7 @@ function draw(persons, relations, personSettings) {
         .attr("text-anchor", "middle")
         .attr("alignment-baseline", "middle")
         .text(function(p) {
-        return `${p.id} ${p.name}`;//`${p.name}`;//
+        return `${p.id} ${p.name} `;//`${p.name}`;//${personSettings[p.id].x} ${getCoordinateX(p.id, relations, personSettings)}
         })
         .attr("fill", "black")
         .attr("font-family", "Tahoma")
@@ -64,9 +98,9 @@ function draw(persons, relations, personSettings) {
         const birthYearSource = new Date(persons.find(p => p.id === r.source.id).birthDate).getFullYear();
         const birthYearTarget = new Date(persons.find(p => p.id === r.target.id).birthDate).getFullYear();
 
-        const x1 = personSettings[r.source.id].x * xScale + xAxisOffset;
+        const x1 = getCoordinateX(r.source.id, relations, personSettings) * xScale + xAxisOffset;
         const y1 = (birthYearSource - minYear) * yScale + yAxisOffset;
-        const x2 = personSettings[r.target.id].x * xScale + xAxisOffset;
+        const x2 = getCoordinateX(r.target.id, relations, personSettings) * xScale + xAxisOffset;
         const y2 = (birthYearTarget - minYear) * yScale + yAxisOffset;
 
         var mx = x1 + (x2 - x1) / 1.5;
