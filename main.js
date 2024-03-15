@@ -1,10 +1,22 @@
-const totalWidth = 2150;
-const totalHeight = 1000;
+const config = {
+    totalWidth: 2150,
+    totalHeight: 1000,
+    xAxisOffset: 30,
+    yAxisOffset: 30,
+    personDotRadius: 2,
+    personDotColor: "#eb3328",
+    personTitleTextTopPadding: "-7px",
+    personTextColor: "#000000",
+    personFontFamily: "Tahoma",
+    personFontSize: "10px",
+    relationLineColor: "#0000ff",
+    relationLineWidth: 0.5
+};
 const svg = d3.select('#royal-tree')
-    .attr('width', totalWidth)
-    .attr('height', totalHeight)
-    .style('width', totalWidth + "px")
-    .style('height', totalHeight + "px");
+    .attr('width', config.totalWidth)
+    .attr('height', config.totalHeight)
+    .style('width', config.totalWidth + "px")
+    .style('height', config.totalHeight + "px");
 
 Promise.all([
     d3.json("data/persons.json"),
@@ -48,13 +60,11 @@ function getCoordinateX(personId, relations, personSettings) {
 
 function draw(persons, relations, personSettings) {
     // x Axis
-    const xAxisOffset = 30;
-    const xScale = (totalWidth - 2 * xAxisOffset) / 1000;
+    const xScale = (config.totalWidth - 2 * config.xAxisOffset) / 1000;
     // y Axis
-    const yAxisOffset = 30;
     const minYear = Math.min(...persons.map(p => new Date(p.birthDate).getFullYear()));
     const maxYear = Math.max(...persons.map(p => Math.max(new Date(p.birthDate).getFullYear(), new Date(p.deathDate).getFullYear())));
-    const yScale = (totalHeight - 2 * yAxisOffset) / (maxYear - minYear);
+    const yScale = (config.totalHeight - 2 * config.yAxisOffset) / (maxYear - minYear);
 
     // persons
     const person = svg.selectAll("#royal-tree")
@@ -64,30 +74,30 @@ function draw(persons, relations, personSettings) {
 
     person.append("circle")
         .attr("cx", function(p) {
-        return getCoordinateX(p.id, relations, personSettings) * xScale + xAxisOffset;
+        return getCoordinateX(p.id, relations, personSettings) * xScale + config.xAxisOffset;
         })
         .attr("cy", function(p) {
-        return (new Date(p.birthDate).getFullYear() - minYear) * yScale + yAxisOffset;
+        return (new Date(p.birthDate).getFullYear() - minYear) * yScale + config.yAxisOffset;
         })
-        .attr("r", 2)
-        .style("fill", "#eb3328")
+        .attr("r", config.personDotRadius)
+        .style("fill", config.personDotColor)
     
     person.append("text")
         .attr("x", function(p) {
-        return getCoordinateX(p.id, relations, personSettings) * xScale + xAxisOffset;
+        return getCoordinateX(p.id, relations, personSettings) * xScale + config.xAxisOffset;
         })
         .attr("y", function(p) {
-        return (new Date(p.birthDate).getFullYear() - minYear) * yScale + yAxisOffset;
+        return (new Date(p.birthDate).getFullYear() - minYear) * yScale + config.yAxisOffset;
         })
-        .attr("dy", "-7px")
+        .attr("dy", config.personTitleTextTopPadding)
         .attr("text-anchor", "middle")
         .attr("alignment-baseline", "middle")
         .text(function(p) {
         return `${p.id} ${p.name} `;//`${p.name}`;//${personSettings[p.id].x} ${getCoordinateX(p.id, relations, personSettings)}
         })
-        .attr("fill", "black")
-        .attr("font-family", "Tahoma")
-        .attr("font-size", "10px");
+        .attr("fill", config.personTextColor)
+        .attr("font-family", config.personFontFamily)
+        .attr("font-size", config.personFontSize);
     
     // relations
     svg.selectAll("#royal-tree")
@@ -98,10 +108,10 @@ function draw(persons, relations, personSettings) {
         const birthYearSource = new Date(persons.find(p => p.id === r.source.id).birthDate).getFullYear();
         const birthYearTarget = new Date(persons.find(p => p.id === r.target.id).birthDate).getFullYear();
 
-        const x1 = getCoordinateX(r.source.id, relations, personSettings) * xScale + xAxisOffset;
-        const y1 = (birthYearSource - minYear) * yScale + yAxisOffset;
-        const x2 = getCoordinateX(r.target.id, relations, personSettings) * xScale + xAxisOffset;
-        const y2 = (birthYearTarget - minYear) * yScale + yAxisOffset;
+        const x1 = getCoordinateX(r.source.id, relations, personSettings) * xScale + config.xAxisOffset;
+        const y1 = (birthYearSource - minYear) * yScale + config.yAxisOffset;
+        const x2 = getCoordinateX(r.target.id, relations, personSettings) * xScale + config.xAxisOffset;
+        const y2 = (birthYearTarget - minYear) * yScale + config.yAxisOffset;
 
         var mx = x1 + (x2 - x1) / 1.5;
         var my = y1 + (y2 - y1) / 8;
@@ -109,6 +119,6 @@ function draw(persons, relations, personSettings) {
         return `M${x1},${y1} Q${mx},${my} ${x2},${y2}`;
     })
     .style("fill", "none")
-    .style("stroke", "blue")
-    .style("stroke-width", 0.5);
+    .style("stroke", config.relationLineColor)
+    .style("stroke-width", config.relationLineWidth);
 }
