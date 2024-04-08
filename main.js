@@ -9,8 +9,8 @@ const config = {
     personTextColor: "#000000",
     personFontFamily: "Tahoma",
     personFontSize: "10px",
-    relationLineColor: "#0000ff",
-    relationLineWidth: 0.5
+    relationLineDefaultColor: "#d3d3d3",
+    relationLineWidth: 0.75
 };
 const svg = d3.select('#royal-tree')
     .attr('width', config.totalWidth)
@@ -21,8 +21,9 @@ const svg = d3.select('#royal-tree')
 Promise.all([
     d3.json("data/persons.json"),
     d3.json("data/relations.json"),
-    d3.json("data/person-settings.json")
-]).then(values => draw(values[0], values[1], values[2]));
+    d3.json("data/person-settings.json"),
+    d3.json("data/dynasty-settings.json")
+]).then(values => draw(values[0], values[1], values[2], values[3]));
 
 function isParentRelation(relation) {
     return relation.type === "father-child" || relation.type === "mother-child";
@@ -58,13 +59,39 @@ function getCoordinateX(personId, relations, personSettings) {
     }
 }
 
-function draw(persons, relations, personSettings) {
+function draw(persons, relations, personSettings, dynastySettings) {
     // x Axis
     const xScale = (config.totalWidth - 2 * config.xAxisOffset) / 1000;
     // y Axis
-    const minYear = Math.min(...persons.map(p => new Date(p.birthDate).getFullYear()));
-    const maxYear = Math.max(...persons.map(p => Math.max(new Date(p.birthDate).getFullYear(), new Date(p.deathDate).getFullYear())));
+    const minYear = Math.min(...persons.map(p => new Date(p.birthDate).getFullYear() || null));
+    const maxYear = Math.max(...persons.map(p => Math.max(new Date(p.birthDate).getFullYear() || null, new Date(p.deathDate).getFullYear() || null)));
     const yScale = (config.totalHeight - 2 * config.yAxisOffset) / (maxYear - minYear);
+    // relations
+    svg.selectAll("#royal-tree")
+    .data(relations.filter(r => r.type === "father-child" || r.type === "mother-child"))
+    .enter()
+    .append("path")
+    .attr("d", function(r) {
+        const birthYearSource = new Date(persons.find(p => p.id === r.source.id).birthDate).getFullYear();
+        const birthYearTarget = new Date(persons.find(p => p.id === r.target.id).birthDate).getFullYear();
+
+        const x1 = getCoordinateX(r.source.id, relations, personSettings) * xScale + config.xAxisOffset;
+        const y1 = (birthYearSource - minYear) * yScale + config.yAxisOffset;
+        const x2 = getCoordinateX(r.target.id, relations, personSettings) * xScale + config.xAxisOffset;
+        const y2 = (birthYearTarget - minYear) * yScale + config.yAxisOffset;
+
+        var mx = x1 + (x2 - x1) / 1.5;
+        var my = y1 + (y2 - y1) / 8;
+
+        return `M${x1},${y1} Q${mx},${my} ${x2},${y2}`;
+    })
+    .style("fill", "none")
+    .style("stroke", function(r) {
+        const dynastyId = persons.find(p => p.id === r.source.id).dynasty;
+        const color = dynastySettings[dynastyId]?.color || config.relationLineDefaultColor;
+        return color;
+    })
+    .style("stroke-width", config.relationLineWidth);
 
     // persons
     const person = svg.selectAll("#royal-tree")
@@ -99,26 +126,4 @@ function draw(persons, relations, personSettings) {
         .attr("font-family", config.personFontFamily)
         .attr("font-size", config.personFontSize);
     
-    // relations
-    svg.selectAll("#royal-tree")
-    .data(relations.filter(r => r.type === "father-child" || r.type === "mother-child"))
-    .enter()
-    .append("path")
-    .attr("d", function(r) {
-        const birthYearSource = new Date(persons.find(p => p.id === r.source.id).birthDate).getFullYear();
-        const birthYearTarget = new Date(persons.find(p => p.id === r.target.id).birthDate).getFullYear();
-
-        const x1 = getCoordinateX(r.source.id, relations, personSettings) * xScale + config.xAxisOffset;
-        const y1 = (birthYearSource - minYear) * yScale + config.yAxisOffset;
-        const x2 = getCoordinateX(r.target.id, relations, personSettings) * xScale + config.xAxisOffset;
-        const y2 = (birthYearTarget - minYear) * yScale + config.yAxisOffset;
-
-        var mx = x1 + (x2 - x1) / 1.5;
-        var my = y1 + (y2 - y1) / 8;
-
-        return `M${x1},${y1} Q${mx},${my} ${x2},${y2}`;
-    })
-    .style("fill", "none")
-    .style("stroke", config.relationLineColor)
-    .style("stroke-width", config.relationLineWidth);
 }
