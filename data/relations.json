@@ -1096,5 +1096,266 @@
       "id": 67
     },
     "type": "mother-child"
+  },
+  {
+    "source": {
+      "id": 26
+    },
+    "target": {
+      "id": 70
+    },
+    "type": "husband-wife"
+  },
+  {
+    "source": {
+      "id": 26
+    },
+    "target": {
+      "id": 69
+    },
+    "type": "father-child"
+  },
+  {
+    "source": {
+      "id": 70
+    },
+    "target": {
+      "id": 69
+    },
+    "type": "mother-child"
+  },
+  {
+    "source": {
+      "id": 27
+    },
+    "target": {
+      "id": 71
+    },
+    "type": "husband-wife"
+  },
+  {
+    "source": {
+      "id": 27
+    },
+    "target": {
+      "id": 72
+    },
+    "type": "father-child"
+  },
+  {
+    "source": {
+      "id": 71
+    },
+    "target": {
+      "id": 72
+    },
+    "type": "mother-child"
+  },
+  {
+    "source": {
+      "id": 27
+    },
+    "target": {
+      "id": 73
+    },
+    "type": "father-child"
+  },
+  {
+    "source": {
+      "id": 71
+    },
+    "target": {
+      "id": 73
+    },
+    "type": "mother-child"
+  },
+  {
+    "source": {
+      "id": 27
+    },
+    "target": {
+      "id": 74
+    },
+    "type": "father-child"
+  },
+  {
+    "source": {
+      "id": 71
+    },
+    "target": {
+      "id": 74
+    },
+    "type": "mother-child"
+  },
+  {
+    "source": {
+      "id": 42
+    },
+    "target": {
+      "id": 75
+    },
+    "type": "husband-wife"
+  },
+  {
+    "source": {
+      "id": 42
+    },
+    "target": {
+      "id": 76
+    },
+    "type": "father-child"
+  },
+  {
+    "source": {
+      "id": 75
+    },
+    "target": {
+      "id": 76
+    },
+    "type": "mother-child"
+  },
+  {
+    "source": {
+      "id": 42
+    },
+    "target": {
+      "id": 77
+    },
+    "type": "father-child"
+  },
+  {
+    "source": {
+      "id": 75
+    },
+    "target": {
+      "id": 77
+    },
+    "type": "mother-child"
+  },
+  {
+    "source": {
+      "id": 43
+    },
+    "target": {
+      "id": 79
+    },
+    "type": "father-child"
+  },
+  {
+    "source": {
+      "id": 78
+    },
+    "target": {
+      "id": 79
+    },
+    "type": "mother-child"
+  },
+  {
+    "source": {
+      "id": 43
+    },
+    "target": {
+      "id": 81
+    },
+    "type": "father-child"
+  },
+  {
+    "source": {
+      "id": 80
+    },
+    "target": {
+      "id": 81
+    },
+    "type": "mother-child"
+  },
+  {
+    "source": {
+      "id": 43
+    },
+    "target": {
+      "id": 82
+    },
+    "type": "father-child"
+  },
+  {
+    "source": {
+      "id": 80
+    },
+    "target": {
+      "id": 82
+    },
+    "type": "mother-child"
+  },
+  {
+    "source": {
+      "id": 83
+    },
+    "target": {
+      "id": 44
+    },
+    "type": "husband-wife"
+  },
+  {
+    "source": {
+      "id": 83
+    },
+    "target": {
+      "id": 84
+    },
+    "type": "father-child"
+  },
+  {
+    "source": {
+      "id": 44
+    },
+    "target": {
+      "id": 84
+    },
+    "type": "mother-child"
+  },
+  {
+    "source": {
+      "id": 85
+    },
+    "target": {
+      "id": 45
+    },
+    "type": "husband-wife"
+  },
+  {
+    "source": {
+      "id": 85
+    },
+    "target": {
+      "id": 86
+    },
+    "type": "father-child"
+  },
+  {
+    "source": {
+      "id": 45
+    },
+    "target": {
+      "id": 86
+    },
+    "type": "mother-child"
+  },
+  {
+    "source": {
+      "id": 85
+    },
+    "target": {
+      "id": 87
+    },
+    "type": "father-child"
+  },
+  {
+    "source": {
+      "id": 45
+    },
+    "target": {
+      "id": 87
+    },
+    "type": "mother-child"
   }
 ]
