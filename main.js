@@ -101,26 +101,28 @@ function draw(persons, relations, personSettings, dynastySettings) {
 
     person.append("circle")
         .attr("cx", function(p) {
-        return getCoordinateX(p.id, relations, personSettings) * xScale + config.xAxisOffset;
+            return getCoordinateX(p.id, relations, personSettings) * xScale + config.xAxisOffset;
         })
         .attr("cy", function(p) {
-        return (new Date(p.birthDate).getFullYear() - minYear) * yScale + config.yAxisOffset;
+            return (new Date(p.birthDate).getFullYear() - minYear) * yScale + config.yAxisOffset;
         })
         .attr("r", config.personDotRadius)
         .style("fill", config.personDotColor)
     
     person.append("text")
         .attr("x", function(p) {
-        return getCoordinateX(p.id, relations, personSettings) * xScale + config.xAxisOffset;
+            return getCoordinateX(p.id, relations, personSettings) * xScale + config.xAxisOffset;
         })
         .attr("y", function(p) {
-        return (new Date(p.birthDate).getFullYear() - minYear) * yScale + config.yAxisOffset;
+            return (new Date(p.birthDate).getFullYear() - minYear) * yScale + config.yAxisOffset;
         })
-        .attr("dy", config.personTitleTextTopPadding)
+        .attr("dy", function(p) {
+            return personSettings[p.id].titleYPosition ?? config.personTitleTextTopPadding
+        })
         .attr("text-anchor", "middle")
         .attr("alignment-baseline", "middle")
         .text(function(p) {
-        return `${p.id} ${p.name} `;//`${p.name}`;//${personSettings[p.id].x} ${getCoordinateX(p.id, relations, personSettings)}
+            return `${p.id} ${p.name} `;//`${p.name}`;//${personSettings[p.id].x} ${getCoordinateX(p.id, relations, personSettings)}
         })
         .attr("fill", config.personTextColor)
         .attr("font-family", config.personFontFamily)
